@@ -68,7 +68,8 @@
         <div class="result-box mt-4">
             <h3>Results</h3>
             <p><strong>New Payoff Date:</strong> {{ payoff_month }}/{{ payoff_year }}</p>
-            <p><strong>Total Interest Saved:</strong> ${{ interest_saved }}</p>
+            <p><strong>Total Interest Saved:</strong> ${{ interest_saved }}</p> 
+            <p><strong>You have </strong> {{ years_remaining }} years and {{ months_remaining }} months remaining on your loan.</p>
         </div>
         {% elif error %}
         <div class="alert alert-danger mt-4" role="alert">
