@@ -5,18 +5,28 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 class MortgageAppUITest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        from selenium import webdriver
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.common.keys import Keys
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-        import time
-        cls.driver = webdriver.Chrome()
-        cls.driver.get('http://127.0.0.1:5000/')
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        cls.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        # Wait for Flask app to be up before proceeding
+        for _ in range(20):
+            try:
+                cls.driver.get('http://127.0.0.1:5000/')
+                if 'Mortgage Payoff Calculator' in cls.driver.page_source:
+                    break
+            except Exception:
+                time.sleep(1)
+        else:
+            raise RuntimeError('Flask app did not start in time for Selenium test.')
 
     @classmethod
     def tearDownClass(cls):
