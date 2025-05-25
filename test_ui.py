@@ -9,34 +9,14 @@ import time
 class MortgageAppUITest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        import os
+        from selenium import webdriver
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.common.keys import Keys
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
         import time
-        selenium_url = os.environ.get('SELENIUM_REMOTE_URL')
-        if selenium_url:
-            from selenium.webdriver.chrome.options import Options
-            options = Options()
-            options.add_argument('--headless')
-            options.add_argument('--no-sandbox')
-            options.add_argument('--disable-dev-shm-usage')
-            cls.driver = webdriver.Remote(
-                command_executor=selenium_url,
-                options=options
-            )
-            flask_url = 'http://host.docker.internal:5000/'
-            # Wait for Flask app to be up before proceeding
-            for _ in range(20):
-                try:
-                    cls.driver.get(flask_url)
-                    if 'Mortgage Payoff Calculator' in cls.driver.page_source:
-                        break
-                except Exception:
-                    time.sleep(1)
-            else:
-                raise RuntimeError('Flask app did not start in time for Selenium test.')
-        else:
-            cls.driver = webdriver.Chrome()
-            flask_url = 'http://127.0.0.1:5000/'
-            cls.driver.get(flask_url)
+        cls.driver = webdriver.Chrome()
+        cls.driver.get('http://127.0.0.1:5000/')
 
     @classmethod
     def tearDownClass(cls):

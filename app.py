@@ -113,8 +113,4 @@ def index():
     return render_template('index.html', result=False, defaults=defaults)
 
 if __name__ == '__main__':
-    # Use 0.0.0.0 in CI (GitHub Actions), else default to localhost
-    if os.environ.get('GITHUB_ACTIONS') == 'true':
-        app.run(debug=True, host='0.0.0.0')
-    else:
-        app.run(debug=True)
+    app.run(debug=True)
