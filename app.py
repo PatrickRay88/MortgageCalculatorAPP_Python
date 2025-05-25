@@ -9,6 +9,7 @@ from flask import Flask, render_template, request
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import math
+import os
 
 app = Flask(__name__)
 
@@ -112,4 +113,8 @@ def index():
     return render_template('index.html', result=False, defaults=defaults)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use 0.0.0.0 in CI (GitHub Actions), else default to localhost
+    if os.environ.get('GITHUB_ACTIONS') == 'true':
+        app.run(debug=True, host='0.0.0.0')
+    else:
+        app.run(debug=True)
