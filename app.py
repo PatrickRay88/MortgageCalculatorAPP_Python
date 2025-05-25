@@ -75,7 +75,7 @@ def calculate_payoff_and_savings(starting_balance, current_balance, interest_rat
 def index():
     defaults = {
         'starting_balance': 166500,
-        'current_balance': 59500,
+        'current_balance': 50163,
         'interest_rate': 3.25,
         'start_date': '2019-02-19'
     }
