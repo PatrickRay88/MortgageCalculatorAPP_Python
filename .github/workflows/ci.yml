@@ -29,7 +29,7 @@ jobs:
     - name: Start Flask app
       run: |
         nohup python app.py &
-        sleep 5
+        sleep 20
     - name: Run unit tests
       run: |
         python -m unittest Unit_test.py
