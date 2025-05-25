@@ -9,8 +9,21 @@ import time
 class MortgageAppUITest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # You may need to adjust the path to your webdriver
-        cls.driver = webdriver.Chrome()
+        # Use remote WebDriver if running in CI (GitHub Actions)
+        import os
+        selenium_url = os.environ.get('SELENIUM_REMOTE_URL')
+        if selenium_url:
+            from selenium.webdriver.chrome.options import Options
+            options = Options()
+            options.add_argument('--headless')
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
+            cls.driver = webdriver.Remote(
+                command_executor=selenium_url,
+                options=options
+            )
+        else:
+            cls.driver = webdriver.Chrome()
         cls.driver.get('http://127.0.0.1:5000/')
 
     @classmethod
