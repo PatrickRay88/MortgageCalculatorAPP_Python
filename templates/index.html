@@ -64,6 +64,30 @@
             <button type="submit" class="btn btn-primary btn-block">Calculate</button>
         </form>
 
+        <!-- Modal for Results -->
+        <div class="modal fade" id="resultsModal" tabindex="-1" role="dialog" aria-labelledby="resultsModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="resultsModalLabel">Results (v1.0)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div id="modalResultsContent">
+                  <!-- Results will be injected here -->
+                </div>
+                <div class="text-muted mt-2" id="modalTimestamp"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-primary" id="saveResultsBtn">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {% if result %}
         <div class="result-box mt-4">
             <h3>Results</h3>
@@ -77,5 +101,40 @@
         </div>
         {% endif %}
     </div>
+
+    {% if result %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Prepare results content
+        var resultsHtml = `<p><strong>New Payoff Date:</strong> {{ payoff_month }}/{{ payoff_year }}</p>` +
+          `<p><strong>Total Interest Saved:</strong> ${{ interest_saved }}</p>` +
+          `<p><strong>You have </strong> {{ years_remaining }} years and {{ months_remaining }} months remaining on your loan.</p>`;
+        document.getElementById('modalResultsContent').innerHTML = resultsHtml;
+        // Add timestamp
+        var now = new Date();
+        document.getElementById('modalTimestamp').innerText = 'Generated: ' + now.toLocaleString();
+        // Show modal
+        $('#resultsModal').modal('show');
+        // Save button handler
+        document.getElementById('saveResultsBtn').onclick = function() {
+          var enteredValues = `Starting Balance: {{ defaults.starting_balance }}\nCurrent Balance: {{ defaults.current_balance }}\nInterest Rate: {{ defaults.interest_rate }}\nLump Sum: {{ request.form.lump_sum or '' }}\nMonthly Extra: {{ request.form.monthly_extra or '' }}\nStart Date: {{ defaults.start_date }}`;
+          var results = `New Payoff Date: {{ payoff_month }}/{{ payoff_year }}\nTotal Interest Saved: ${{ interest_saved }}\nYears Remaining: {{ years_remaining }}\nMonths Remaining: {{ months_remaining }}`;
+          var version = 'App Version: 1.0';
+          var timestamp = 'Generated: ' + now.toLocaleString();
+          var text = version + '\n' + timestamp + '\n\n' + enteredValues + '\n\n' + results;
+          var blob = new Blob([text], {type: 'text/plain'});
+          var link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = 'mortgage_results.txt';
+          link.click();
+        };
+      });
+    </script>
+    {% endif %}
+
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
