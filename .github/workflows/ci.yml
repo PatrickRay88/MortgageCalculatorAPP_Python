@@ -30,6 +30,10 @@ jobs:
       run: |
         nohup python app.py &
         sleep 20
+    - name: Wait for Flask app
+      run: |
+        pip install wait-for-it
+        python -m wait_for_it http://localhost:5000/ --timeout 30
     - name: Run unit tests
       run: |
         python -m unittest Unit_test.py
