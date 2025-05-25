@@ -9,8 +9,8 @@ import time
 class MortgageAppUITest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # Use remote WebDriver if running in CI (GitHub Actions)
         import os
+        import time
         selenium_url = os.environ.get('SELENIUM_REMOTE_URL')
         if selenium_url:
             from selenium.webdriver.chrome.options import Options
@@ -22,9 +22,19 @@ class MortgageAppUITest(unittest.TestCase):
                 command_executor=selenium_url,
                 options=options
             )
+            # Wait for Flask app to be up before proceeding
+            for _ in range(10):
+                try:
+                    cls.driver.get('http://127.0.0.1:5000/')
+                    if 'Mortgage Payoff Calculator' in cls.driver.page_source:
+                        break
+                except Exception:
+                    time.sleep(1)
+            else:
+                raise RuntimeError('Flask app did not start in time for Selenium test.')
         else:
             cls.driver = webdriver.Chrome()
-        cls.driver.get('http://127.0.0.1:5000/')
+            cls.driver.get('http://127.0.0.1:5000/')
 
     @classmethod
     def tearDownClass(cls):
