@@ -22,10 +22,11 @@ class MortgageAppUITest(unittest.TestCase):
                 command_executor=selenium_url,
                 options=options
             )
+            flask_url = 'http://host.docker.internal:5000/'
             # Wait for Flask app to be up before proceeding
-            for _ in range(10):
+            for _ in range(20):
                 try:
-                    cls.driver.get('http://127.0.0.1:5000/')
+                    cls.driver.get(flask_url)
                     if 'Mortgage Payoff Calculator' in cls.driver.page_source:
                         break
                 except Exception:
@@ -34,7 +35,8 @@ class MortgageAppUITest(unittest.TestCase):
                 raise RuntimeError('Flask app did not start in time for Selenium test.')
         else:
             cls.driver = webdriver.Chrome()
-            cls.driver.get('http://127.0.0.1:5000/')
+            flask_url = 'http://127.0.0.1:5000/'
+            cls.driver.get(flask_url)
 
     @classmethod
     def tearDownClass(cls):
